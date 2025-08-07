@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ссылка на вашу заметку</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/note.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Ссылка на вашу заметку</h1>
+        <p>Ваша заметка была успешно загружена! Скопируйте ссылку ниже:</p>
+
+        <div class="link-box">
+            <button onclick="copyLink()">Скопировать</button>
+            <input type="text" id="noteLink" value="{{ url }}" readonly>
+        </div>
+
+        <br>
+        <a href="/">Вернуться на главную страницу</a>
+    </div>
+
+    <script>
+        function copyLink() {
+            const input = document.getElementById("noteLink");
+            input.select();
+            input.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+        }
+    </script>
+</body>
+</html>
