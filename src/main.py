@@ -7,8 +7,17 @@ from fastapi.templating import Jinja2Templates
 from src import models, schemas, database
 from sqlalchemy.orm import Session
 from src.config import ACCESS_KEY, SECRET_KEY, BUCKET_NAME
+import ctypes
 app = FastAPI()
 
+lib = ctypes.CDLL("src/C++/build/libСhash.dylib")
+lib.sha256_c.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+lib.sha256_c.restype = None
+def sha256(text: str) -> str:
+    input_bytes = text.encode('utf-8')
+    output_buffer = ctypes.create_string_buffer(65)
+    lib.sha256_c(input_bytes, output_buffer)
+    return output_buffer.value.decode('utf-8')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,7 +45,7 @@ async def index(request: Request):
 
 @app.post("/upload")
 async def upload(request: Request, text_content: str = Form(...),db: Session = Depends(get_db)):
-    new_data = models.User(data=text_content, hashed_data="123")
+    new_data = models.User(data=text_content, hashed_data=sha256(text_content))
     db.add(new_data)
     db.commit()
     db.refresh(new_data)
