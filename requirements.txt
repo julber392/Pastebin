@@ -5,3 +5,5 @@ sqlalchemy
 jinja2
 dotenv
 pydantic
+psycopg2
+python-multipart
